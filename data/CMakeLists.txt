@@ -45,16 +45,20 @@ add_custom_command(
 
 add_custom_target(generate_all_sql_in ALL DEPENDS ${ALL_SQL_IN})
 
-add_custom_command(
-  OUTPUT ${PROJ_DB}
-  COMMAND ${CMAKE_COMMAND} -E remove -f ${PROJ_DB}
-  COMMAND ${EXE_SQLITE3} -init ${ALL_SQL_IN} ${PROJ_DB} .quit
-  COMMAND ${CMAKE_COMMAND} -E copy ${PROJ_DB} ${CMAKE_CURRENT_BINARY_DIR}/for_tests
-  # note: we didn't port yet the foreign_key_check done in Makefile.am
-  DEPENDS generate_all_sql_in ${ALL_SQL_IN}
-  COMMENT "Generating proj.db"
-  VERBATIM
-)
+if(BUILD_DB)
+  add_custom_command(
+    OUTPUT ${PROJ_DB}
+    COMMAND ${CMAKE_COMMAND} -E remove -f ${PROJ_DB}
+    COMMAND ${EXE_SQLITE3} -init ${ALL_SQL_IN} ${PROJ_DB} .quit
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJ_DB} ${CMAKE_CURRENT_BINARY_DIR}/for_tests
+    # note: we didn't port yet the foreign_key_check done in Makefile.am
+    DEPENDS generate_all_sql_in ${ALL_SQL_IN}
+    COMMENT "Generating proj.db"
+    VERBATIM
+  )
+else()
+  file(COPY ${CMAKE_SOURCE_DIR}/proj.db DESTINATION ${CMAKE_CURRENT_BINARY_DIR}) 
+endif()
 
 add_custom_target(generate_proj_db ALL DEPENDS ${PROJ_DB})
 

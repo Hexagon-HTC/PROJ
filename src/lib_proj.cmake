@@ -5,12 +5,7 @@ message(STATUS "Configuring proj library:")
 ##############################################
 
 # default config is shared, except static on Windows
-set(BUILD_SHARED_LIBS_DEFAULT ON)
-if(WIN32)
-  set(BUILD_SHARED_LIBS_DEFAULT OFF)
-endif()
-option(BUILD_SHARED_LIBS
-  "Build PROJ library shared." ${BUILD_SHARED_LIBS_DEFAULT})
+option(BUILD_LIBPROJ_SHARED "Build libproj library shared." ${BUILD_SHARED_LIBS})
 
 option(USE_THREAD "Build libproj with thread/mutex support " ON)
 if(NOT USE_THREAD)
@@ -374,6 +369,11 @@ set_target_properties(proj
   PROPERTIES
   LINKER_LANGUAGE CXX)
 
+target_include_directories(proj PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+target_compile_definitions(proj PUBLIC $<$<CONFIG:Debug>:proj_DEBUG>)
 ##############################################
 # Link properties
 ##############################################
@@ -394,8 +394,7 @@ if(USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
   target_link_libraries(proj PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
-target_include_directories(proj PRIVATE ${SQLITE3_INCLUDE_DIR})
-target_link_libraries(proj PRIVATE ${SQLITE3_LIBRARY})
+target_link_libraries(proj PRIVATE SQLite::SQLite3)
 
 if(TIFF_ENABLED)
   target_compile_definitions(proj PRIVATE -DTIFF_ENABLED)

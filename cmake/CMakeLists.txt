@@ -1,7 +1,6 @@
 # The old CMake PROJECT-NAME was PROJ4.
 set (PROJECT_LEGACY_NAME PROJ4)
 string (TOLOWER "${PROJECT_NAME}" PROJECT_NAME_LOWER)
-string (TOLOWER "${PROJECT_LEGACY_NAME}" PROJECT_LEGACY_LOWER)
 
 # Starting with version 7.0, we install config-style find package
 # files so that PROJ can be found with both
