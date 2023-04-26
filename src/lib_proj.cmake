@@ -427,6 +427,12 @@ set_target_properties(proj
   PROPERTIES
   LINKER_LANGUAGE CXX)
 
+target_include_directories(proj PUBLIC
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+target_compile_definitions(proj PUBLIC $<$<CONFIG:Debug>:proj_DEBUG>)
+
 ##############################################
 # Link properties
 ##############################################
@@ -447,8 +453,7 @@ if(USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
   target_link_libraries(proj PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
-target_include_directories(proj PRIVATE ${SQLITE3_INCLUDE_DIR})
-target_link_libraries(proj PRIVATE ${SQLITE3_LIBRARY})
+target_link_libraries(proj PRIVATE SQLite::SQLite3)
 
 if(NLOHMANN_JSON STREQUAL "external")
   target_compile_definitions(proj PRIVATE EXTERNAL_NLOHMANN_JSON)
