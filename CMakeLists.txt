@@ -171,21 +171,11 @@ message(STATUS "nlohmann/json: ${NLOHMANN_JSON}")
 # Check for sqlite3
 ################################################################################
 
-find_program(EXE_SQLITE3 sqlite3)
-if(NOT EXE_SQLITE3)
-  message(SEND_ERROR "sqlite3 binary not found!")
+if(BUILD_DB)
+  find_program(EXE_SQLITE3 SQLite3Exe REQUIRED CONFIG)
 endif()
 
-find_package(Sqlite3 REQUIRED)
-if(NOT SQLITE3_FOUND)
-  message(SEND_ERROR "sqlite3 dependency not found!")
-endif()
-
-# Would build and run with older versions, but with horrible performance
-# See https://github.com/OSGeo/PROJ/issues/1718
-if("${SQLITE3_VERSION}" VERSION_LESS "3.11")
-  message(SEND_ERROR "sqlite3 >= 3.11 required!")
-endif()
+find_package(SQLite3 REQUIRED CONFIG)
 
 ################################################################################
 # Check for libtiff
@@ -295,7 +285,7 @@ include(ProjInstallPath)
 # By default GNUInstallDirs will use the upper case project name
 # for CMAKE_INSTALL_DOCDIR, resulting in something like share/doc/PROJ
 # instead of share/doc/proj which historically have been the path used
-# by the project. 
+# by the project.
 # Here force the use of a lower case project name and reset after
 # GNUInstallDirs has done its thing
 set(PROJECT_NAME_ORIGINAL "${PROJECT_NAME}")
@@ -326,7 +316,7 @@ include_directories(${PROJ_SOURCE_DIR}/src)
 add_subdirectory(data)
 add_subdirectory(include)
 add_subdirectory(src)
-add_subdirectory(man)
+
 add_subdirectory(cmake)
 if(BUILD_TESTING)
   add_subdirectory(test)
